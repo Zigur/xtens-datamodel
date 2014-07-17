@@ -1,0 +1,29 @@
+{
+  "name": "xtens-datamodel",
+  "version": "0.0.0",
+  "description": "a JavaScript Implementation of the XTENS data model",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zigur/xtens-datamodel.git"
+  },
+  "keywords": [
+    "data model",
+    "metadata",
+    "data sharing"
+  ],
+  "author": "Massimiliano Izzo",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/Zigur/xtens-datamodel/issues"
+  },
+  "homepage": "https://github.com/Zigur/xtens-datamodel",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.20.1",
+    "should": "^4.0.4"
+  }
+}
