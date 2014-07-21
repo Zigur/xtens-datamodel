@@ -3,8 +3,9 @@
  *
  */
 var should = require('should');
+var Constants = require('../../lib/Constants.js').Constants;
 var CompositeDataType = require('../../lib/DataType.js').CompositeDataType;
-var MetaDataField = require('../../lib/DataType.js').MetaDataField;
+var MetadataField = require('../../lib/DataType.js').MetadataField;
 
 /**
  *METADATA_FIELD UNIT TESTS
@@ -22,8 +23,23 @@ describe("MetaDataField", function() {
             object.possibleValues = ['Fingolfin', 'Finarfin', 'Feanor', 'Finwe', 'Turgon', 'Gil-galad'];
             object.hasUnit = true;  // I'm faking languages as units
             object.possibleUnits = ['Quenya', 'Sindarin'];
-            var mdataField = new MetaDataField(params);
-            /* TODO add assertion on mdataField */
+            var mdataField = new MetadataField(object);
+            console.log(mdataField.getLabel());
+            mdataField.getLabel().should.equal(Constants.METADATA_FIELD);
+            mdataField.name.should.equal(object.name);
+            mdataField.required.should.be.true;
+            mdataField.isList.should.be.true;
+            var len = object.possibleValues.length;
+            mdataField.possibleValues.should.have.length(len);
+            for (var i=0; i<len; i++) {
+                 mdataField.possibleValues[i].should.equal(object.possibleValues[i]);
+            }
+            mdataField.hasUnit.should.be.true;
+            len = object.possibleUnits.length;
+            mdataField.possibleUnits.should.have.length(len);
+            for (i=0; i<len; i++) {
+                mdataField.possibleUnits[i].should.equal(object.possibleUnits[i]);
+            }
         });
     });
 
