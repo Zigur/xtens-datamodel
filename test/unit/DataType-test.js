@@ -6,6 +6,7 @@
  */
 var should = require('should');
 var Constants = require('../../lib/Constants.js').Constants;
+var FieldTypes = require('../../lib/Constants.js').FieldTypes;
 var DataType = require('../../lib/DataType.js').DataType;
 var MetadataGroup = require('../../lib/DataType.js').MetadataGroup;
 var MetadataLoop = require('../../lib/DataType.js').MetadataLoop;
@@ -28,7 +29,7 @@ describe("MetaDataField", function() {
             object.hasUnit = true;  // I'm faking languages as units
             object.possibleUnits = ['Quenya', 'Sindarin'];
             var mdataField = new MetadataField(object);
-            mdataField.getLabel().should.equal(Constants.METADATA_FIELD);
+            mdataField.label.should.equal(Constants.METADATA_FIELD);
             mdataField.name.should.equal(object.name);
             mdataField.required.should.be.true;
             mdataField.isList.should.be.true;
@@ -59,11 +60,13 @@ describe("DataType", function() {
     /* DataType constructor test */
     describe("#constructor()", function(){
         it("should create an empty DataType", function() {
-            var id = 1;
-            var name = "Test Data Type";
-            var dataType = new DataType(id, name);
-            dataType.id.should.be.exactly(id);
-            dataType.name.should.equal(name);
+            var obj = {
+                id: 1,
+                name: "Test Data Type"    
+            }; 
+            var dataType = new DataType(obj);
+            dataType.id.should.be.exactly(obj.id);
+            dataType.name.should.equal(obj.name);
             dataType.header.should.be.empty;
             dataType.content.should.be.empty;
         });
@@ -75,7 +78,7 @@ describe("DataType", function() {
             var dataType = new DataType(1, "Test Data Type");
             var mdataGroups = [], MAX = 5;
             for (var i=0; i<MAX; i++) {
-                mdataGroups[i] = new MetadataGroup(i, "testGroup_"+i);
+                mdataGroups[i] = new MetadataGroup({id: i, name: "testGroup_"+i});
             }
             for (i=MAX-1; i>=0; i--) {
                 dataType.add(mdataGroups[i]);
@@ -95,21 +98,22 @@ describe("DataType", function() {
  *
  */
 describe("MetadataLoop", function() {
-    describe("#constructor", function() {
+    describe("#constructor()", function() {
         it("should create an empty MetadataLoop", function() {
-            var id = 1;
-            var loop = new MetadataLoop(id);
-            loop.id.should.be.exactly(id);
-            loop.getLabel().should.equal(Constants.METADATA_LOOP);
+            var obj = {};
+            obj.id = 1;
+            var loop = new MetadataLoop(obj);
+            loop.id.should.be.exactly(obj.id);
+            loop.label.should.equal(Constants.METADATA_LOOP);
             loop.content.should.be.instanceOf(Array);
             loop.content.should.be.empty;
         });  
     });
 
-    describe("#add", function() {
+    describe("#add()", function() {
         it("should throw an error", function(done) {
-            var loop_1 = new MetadataLoop(1);
-            var loop_2 = new MetadataLoop(2);
+            var loop_1 = new MetadataLoop({id: 1});
+            var loop_2 = new MetadataLoop({id: 1});
             try {
                 loop_1.add(loop_2);
                 assert.fail();
@@ -117,6 +121,21 @@ describe("MetadataLoop", function() {
             catch(e) {
                 done();
             } 
+        });
+    });
+
+    describe("#getChild()", function() {
+        it("should create a loop with two fields and access them as children", function(){
+            var content = [];
+            content.push({label:Constants.METADATA_FIELD, id:0, name:"field_0", type:FieldTypes.STRING, required:false, hasUnit:false});
+            content.push({label:Constants.METADATA_FIELD, id:1, name:"field_1", type:FieldTypes.INT, required:true, hasUnit:false});
+            var loop = new MetadataLoop({id:1, molteplicity:4, content:content});
+            var field_0 = loop.getChild(0);
+            field_0.should.be.an.instanceof(MetadataField);
+            var field_1 = loop.getChild(1);
+            field_1.should.be.an.instanceof(MetadataField);
+            var fake = loop.getChild(2);
+            (fake === null).should.be.true;
         });
     });
 });
